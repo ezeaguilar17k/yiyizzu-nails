@@ -1588,3 +1588,111 @@ body {
     bottom: 20px;
   }
 }
+
+/* ==========================================================================
+   ESTILOS: APARTADO DE VALES & ADELANTOS
+   ========================================================================== */
+
+.vales-management-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-card);
+}
+
+.vales-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.vales-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.vales-kpi-card {
+  background: linear-gradient(135deg, #ffffff 0%, var(--bg-card-subtle) 100%);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.vales-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.vales-kpi-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.vales-kpi-value {
+  font-family: var(--font-sans);
+  font-size: 1.85rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.value-produced {
+  color: var(--rose-gold-dark);
+}
+
+.value-vales {
+  color: #c97a2b;
+}
+
+.value-pending {
+  color: #2e8b57;
+}
+
+.vales-kpi-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.card-vales-taken {
+  border-left: 4px solid #f59e0b;
+}
+
+.card-liquidation {
+  border-left: 4px solid #10b981;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.badge-pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.badge-settled {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.btn-vale {
+  background: linear-gradient(135deg, #fcebc2 0%, #e8ba60 100%);
+  color: #633c02;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.2);
+}
+
+.btn-vale:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #fdf1d6 0%, #edc574 100%);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+}

@@ -1,7 +1,7 @@
 /**
- * AURORA NAIL STUDIO - CONTROL FINANCIERO & CLIENTAS
- * Sistema reactivo con persistencia en LocalStorage, gráficos en Canvas puro
- * y gestión completa de ingresos, gastos, servicios y reportes.
+ * YIYIZZU NAILS - LUXURY MANICURE & BEAUTY
+ * Control Integral de Finanzas, Clientas, Vales (Adelantos) y Servicios
+ * Persistencia en LocalStorage, gráficos en Canvas puro, sin registros ficticios (Comenzando en 0)
  */
 
 // ==========================================================================
@@ -9,9 +9,10 @@
 // ==========================================================================
 
 const STORAGE_KEYS = {
-  TRANSACTIONS: 'aurora_transactions_v1',
-  SERVICES: 'aurora_services_v1',
-  SETTINGS: 'aurora_settings_v1'
+  TRANSACTIONS: 'yiyizzu_transactions_v2',
+  VALES: 'yiyizzu_vales_v2',
+  SERVICES: 'yiyizzu_services_v2',
+  SETTINGS: 'yiyizzu_settings_v2'
 };
 
 const DEFAULT_SETTINGS = {
@@ -21,6 +22,7 @@ const DEFAULT_SETTINGS = {
   monthlyGoal: 850000
 };
 
+// Catálogo base de servicios listos para usar
 const DEFAULT_SERVICES = [
   { id: 'srv-1', name: 'Esmaltado Semipermanente', price: 18000, duration: '1h 00m', icon: '💅' },
   { id: 'srv-2', name: 'Esculpidas Acrílicas / Gel', price: 32000, duration: '2h 00m', icon: '✨' },
@@ -31,153 +33,10 @@ const DEFAULT_SERVICES = [
   { id: 'srv-7', name: 'Pedicura Spa Completa', price: 24000, duration: '1h 20m', icon: '👣' }
 ];
 
-// Generar datos de muestra realistas para este mes
-function generateSampleTransactions() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  
-  const sampleItems = [
-    {
-      id: 'tx-1',
-      type: 'income',
-      client: 'Valentina Silva',
-      service: 'Esculpidas Acrílicas / Gel',
-      amount: 32000,
-      tip: 3000,
-      paymentMethod: 'Transferencia',
-      date: `${year}-${month}-02T10:30`,
-      notes: 'Baby Boomer largo #3'
-    },
-    {
-      id: 'tx-2',
-      type: 'income',
-      client: 'Camila Rojas',
-      service: 'Soft Gel (Gel X)',
-      amount: 26000,
-      tip: 2000,
-      paymentMethod: 'Efectivo',
-      date: `${year}-${month}-03T15:00`,
-      notes: 'Francés en tono nude con glitter'
-    },
-    {
-      id: 'tx-3',
-      type: 'expense',
-      category: 'Esmaltes & Geles',
-      concept: 'Pack 8 Esmaltes Cherimoya & Top Coat',
-      amount: 45000,
-      paymentMethod: 'Transferencia',
-      date: `${year}-${month}-04T12:00`,
-      notes: 'Distribuidora Belleza Pro'
-    },
-    {
-      id: 'tx-4',
-      type: 'income',
-      client: 'Sofía Martínez',
-      service: 'Esmaltado Semipermanente',
-      amount: 18000,
-      tip: 1000,
-      paymentMethod: 'Tarjeta',
-      date: `${year}-${month}-05T11:00`,
-      notes: 'Color vino tinto con detalle dorado'
-    },
-    {
-      id: 'tx-5',
-      type: 'income',
-      client: 'Isidora Castro',
-      service: 'Kapping Gel Fortalecedor',
-      amount: 22000,
-      tip: 2000,
-      paymentMethod: 'Transferencia',
-      date: `${year}-${month}-07T16:30`,
-      notes: 'Uñas naturales con baño de calcio'
-    },
-    {
-      id: 'tx-6',
-      type: 'expense',
-      category: 'Limas, Tips & Desechables',
-      concept: 'Caja Tips Gel-X + Limas 100/180 + Guantes',
-      amount: 28000,
-      paymentMethod: 'Efectivo',
-      date: `${year}-${month}-08T14:15`,
-      notes: 'Insumos desechables para el mes'
-    },
-    {
-      id: 'tx-7',
-      type: 'income',
-      client: 'Fernanda Muñoz',
-      service: 'Esculpidas Acrílicas / Gel',
-      amount: 32000,
-      tip: 0,
-      paymentMethod: 'Transferencia',
-      date: `${year}-${month}-09T10:00`,
-      notes: 'Diseño marmoleado en dos dedos'
-    },
-    {
-      id: 'tx-8',
-      type: 'income',
-      client: 'Martina Morales',
-      service: 'Pedicura Spa Completa',
-      amount: 24000,
-      tip: 3000,
-      paymentMethod: 'Efectivo',
-      date: `${year}-${month}-10T14:00`,
-      notes: 'Exfoliación profunda + esmaltado permanente'
-    },
-    {
-      id: 'tx-9',
-      type: 'income',
-      client: 'Daniela Herrera',
-      service: 'Soft Gel (Gel X)',
-      amount: 26000,
-      tip: 4000,
-      paymentMethod: 'Transferencia',
-      date: `${year}-${month}-11T17:00`,
-      notes: 'Efecto Aurora Chrome'
-    },
-    {
-      id: 'tx-10',
-      type: 'expense',
-      category: 'Líquidos & Acrílicos',
-      concept: 'Monómero Mia Secret 8oz + Polvo Cover Pink',
-      amount: 36000,
-      paymentMethod: 'Transferencia',
-      date: `${year}-${month}-12T11:20`,
-      notes: 'Reposición de líquidos'
-    },
-    {
-      id: 'tx-11',
-      type: 'income',
-      client: 'Antonia Pavez',
-      service: 'Esmaltado Semipermanente',
-      amount: 18000,
-      tip: 2000,
-      paymentMethod: 'Transferencia',
-      date: `${year}-${month}-12T16:00`,
-      notes: 'Color nude clásico'
-    },
-    {
-      id: 'tx-12',
-      type: 'income',
-      client: 'Constanza Lagos',
-      service: 'Esculpidas Acrílicas / Gel',
-      amount: 32000,
-      tip: 2500,
-      paymentMethod: 'Tarjeta',
-      date: `${year}-${month}-13T10:30`,
-      notes: 'Almond shape con pedrería Swarovski'
-    }
-  ];
-
-  return sampleItems;
-}
-
-// ==========================================================================
-// ESTADO DE LA APLICACIÓN
-// ==========================================================================
-
+// Estado reactivo central (Comenzando desde 0 sin datos de prueba)
 let state = {
   transactions: [],
+  vales: [],
   services: [],
   settings: { ...DEFAULT_SETTINGS },
   currentPeriod: 'month',
@@ -189,6 +48,11 @@ let state = {
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Limpiar llaves anteriores de prueba si existían
+  localStorage.removeItem('aurora_transactions_v1');
+  localStorage.removeItem('aurora_services_v1');
+  localStorage.removeItem('aurora_settings_v1');
+
   loadStoredData();
   setupEventListeners();
   renderAll();
@@ -199,31 +63,33 @@ function loadStoredData() {
   try {
     const storedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
     state.settings = storedSettings ? JSON.parse(storedSettings) : { ...DEFAULT_SETTINGS };
-    if (!state.settings.studioName || state.settings.studioName === 'Aurora Nail Studio') {
-      state.settings.studioName = 'Yiyizzu Nails';
-    }
+    state.settings.studioName = 'Yiyizzu Nails';
 
     const storedServices = localStorage.getItem(STORAGE_KEYS.SERVICES);
     state.services = storedServices ? JSON.parse(storedServices) : [...DEFAULT_SERVICES];
 
+    // Transacciones: siempre empiezan limpias si no hay guardadas por el usuario
     const storedTransactions = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
-    if (storedTransactions) {
-      state.transactions = JSON.parse(storedTransactions);
-    } else {
-      // Cargar datos de muestra amigables la primera vez
-      state.transactions = generateSampleTransactions();
-      saveTransactions();
-    }
+    state.transactions = storedTransactions ? JSON.parse(storedTransactions) : [];
+
+    // Vales: siempre empiezan limpios
+    const storedVales = localStorage.getItem(STORAGE_KEYS.VALES);
+    state.vales = storedVales ? JSON.parse(storedVales) : [];
   } catch (err) {
     console.error('Error cargando datos:', err);
     state.settings = { ...DEFAULT_SETTINGS };
     state.services = [...DEFAULT_SERVICES];
-    state.transactions = generateSampleTransactions();
+    state.transactions = [];
+    state.vales = [];
   }
 }
 
 function saveTransactions() {
   localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(state.transactions));
+}
+
+function saveVales() {
+  localStorage.setItem(STORAGE_KEYS.VALES, JSON.stringify(state.vales));
 }
 
 function saveServices() {
@@ -277,27 +143,24 @@ function getFilteredTransactions() {
     }
 
     if (currentPeriod === 'week') {
-      // Últimos 7 días
       const diffTime = Math.abs(now - itemDate);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return diffDays <= 7;
     }
 
     if (currentPeriod === 'month') {
-      // Mes calendario actual
       return (
         itemDate.getMonth() === now.getMonth() &&
         itemDate.getFullYear() === now.getFullYear()
       );
     }
 
-    // 'all'
     return true;
   });
 }
 
 // ==========================================================================
-// RENDERIZADO PRINCIPAL
+// RENDERIZADO GENERAL
 // ==========================================================================
 
 function renderAll() {
@@ -307,14 +170,15 @@ function renderAll() {
   renderTransactionsTable();
   renderServicesCatalog();
   renderQuickServiceChips();
+  renderVales();
 }
 
 function renderBrandAndSettings() {
-  document.getElementById('displayStudioName').textContent = state.settings.studioName || DEFAULT_SETTINGS.studioName;
-  document.getElementById('settingStudioName').value = state.settings.studioName || '';
+  document.getElementById('displayStudioName').textContent = state.settings.studioName || 'Yiyizzu Nails';
+  document.getElementById('settingStudioName').value = state.settings.studioName || 'Yiyizzu Nails';
   document.getElementById('settingCurrencySymbol').value = state.settings.currency || '$';
   document.getElementById('settingMonthlyGoal').value = state.settings.monthlyGoal || 850000;
-  document.getElementById('settingManicuristName').value = state.settings.manicuristName || '';
+  document.getElementById('settingManicuristName').value = state.settings.manicuristName || 'Yiyizzu';
 }
 
 // ==========================================================================
@@ -346,28 +210,27 @@ function renderKPIsAndGoal() {
 
   const netBalance = totalIncome - totalExpenses;
   const averageTicket = clientCount > 0 ? Math.round(totalIncome / clientCount) : 0;
-  const netMargin = totalIncome > 0 ? Math.round((netBalance / totalIncome) * 100) : 0;
+  const netMargin = totalIncome > 0 ? Math.round((netBalance / totalIncome) * 100) : 100;
   const expenseRatio = totalIncome > 0 ? Math.round((totalExpenses / totalIncome) * 100) : 0;
 
-  // Actualizar KPIs
   const netBalanceEl = document.getElementById('kpiNetBalance');
   netBalanceEl.textContent = formatMoney(netBalance);
   netBalanceEl.style.color = netBalance >= 0 ? 'var(--rose-gold-dark)' : 'var(--expense-color)';
 
   document.getElementById('kpiNetMargin').textContent = `Margen: ${netMargin}% libre`;
-  document.getElementById('kpiNetStatus').textContent = netBalance >= 0 ? '¡Excelente ritmo! 💅' : 'Revisar gastos ⚠️';
+  document.getElementById('kpiNetStatus').textContent = totalIncome > 0 ? '¡Excelente ritmo! 💅' : 'Comienza registrando citas ✨';
 
   document.getElementById('kpiTotalIncome').textContent = formatMoney(totalIncome);
   document.getElementById('kpiClientsCount').textContent = `${clientCount} clienta${clientCount === 1 ? '' : 's'} atendida${clientCount === 1 ? '' : 's'}`;
   document.getElementById('kpiTipsTotal').textContent = `Propinas: ${formatMoney(totalTips)}`;
 
   document.getElementById('kpiTotalExpenses').textContent = formatMoney(totalExpenses);
-  document.getElementById('kpiExpensesCount').textContent = `${expenseCount} compra${expenseCount === 1 ? '' : 's'} de material`;
+  document.getElementById('kpiExpensesCount').textContent = `${expenseCount} compra${expenseCount === 1 ? '' : 's'} de insumos`;
   document.getElementById('kpiExpenseRatio').textContent = `${expenseRatio}% de ingresos`;
 
   document.getElementById('kpiAverageTicket').textContent = formatMoney(averageTicket);
 
-  // Meta Mensual (Calculada sobre el mes actual, independiente del filtro de vista)
+  // Meta Mensual
   const now = new Date();
   const currentMonthIncome = state.transactions
     .filter(t => {
@@ -385,7 +248,9 @@ function renderKPIsAndGoal() {
   document.getElementById('goalProgressBar').style.width = `${progressPercent}%`;
 
   const cheerEl = document.getElementById('goalCheerMsg');
-  if (progressPercent >= 100) {
+  if (currentMonthIncome === 0) {
+    cheerEl.innerHTML = '✨ ¡Bienvenida Yiyizzu! Todo listo para anotar tus primeras citas del mes.';
+  } else if (progressPercent >= 100) {
     cheerEl.innerHTML = '🎉✨ <strong>¡FELICITACIONES! Has superado tu meta mensual. ¡Eres una artista increíble!</strong>';
   } else if (progressPercent >= 75) {
     cheerEl.innerHTML = `🔥 <strong>¡Estás a un paso!</strong> Solo te falta un ${100 - progressPercent}% para completar tu objetivo.`;
@@ -397,7 +262,105 @@ function renderKPIsAndGoal() {
 }
 
 // ==========================================================================
-// GRÁFICOS INTERACTIVOS (CANVAS PURO & DESGLOSES)
+// APARTADO DE VALES (ADELANTOS PEDIDOS A LA DUEÑA)
+// ==========================================================================
+
+function renderVales() {
+  const tbody = document.getElementById('valesTableBody');
+  const emptyState = document.getElementById('emptyValesState');
+  if (!tbody) return;
+
+  // Total producido en servicios (todos los ingresos registrados)
+  const totalProduced = state.transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + (Number(t.amount) || 0) + (Number(t.tip) || 0), 0);
+
+  // Vales pendientes de descontar (los que aún no han sido liquidados)
+  const pendingValesList = state.vales.filter(v => v.status !== 'liquidado');
+  const totalValesTaken = pendingValesList.reduce((sum, v) => sum + (Number(v.amount) || 0), 0);
+
+  // Saldo neto a cobrar a la dueña el día de pago
+  const netToCollect = Math.max(0, totalProduced - totalValesTaken);
+
+  // Actualizar tarjetas de KPI en la pestaña de vales
+  document.getElementById('valesTotalProduced').textContent = formatMoney(totalProduced);
+  document.getElementById('valesTotalTaken').textContent = `-${formatMoney(totalValesTaken)}`;
+  document.getElementById('valesNetToCollect').textContent = formatMoney(netToCollect);
+  document.getElementById('valesCountDisplay').textContent = `${pendingValesList.length} vale${pendingValesList.length === 1 ? '' : 's'} pendiente${pendingValesList.length === 1 ? '' : 's'}`;
+
+  // Renderizar tabla de vales ordenados por fecha
+  const list = [...state.vales].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  if (list.length === 0) {
+    tbody.innerHTML = '';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  emptyState.style.display = 'none';
+
+  tbody.innerHTML = list.map(item => {
+    const isSettled = item.status === 'liquidado';
+    const dateFormatted = formatDateTime(item.date);
+
+    return `
+      <tr style="${isSettled ? 'opacity: 0.65; background: #fafafa;' : ''}">
+        <td>
+          <div style="font-weight: 600;">${dateFormatted.date}</div>
+          <small style="color: var(--text-light);">${dateFormatted.time}</small>
+        </td>
+        <td>
+          <strong style="color: var(--text-main); font-size: 0.92rem;">${escapeHtml(item.concept || 'Adelanto')}</strong>
+          ${item.notes ? `<div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(item.notes)}</div>` : ''}
+        </td>
+        <td>
+          <span class="badge-method">${escapeHtml(item.paymentMethod || 'Efectivo')}</span>
+        </td>
+        <td>
+          <span class="badge-type ${isSettled ? 'badge-settled' : 'badge-pending'}">
+            ${isSettled ? '✅ Descontado / Liquidado' : '⏳ Pendiente de pago'}
+          </span>
+        </td>
+        <td class="text-right">
+          <strong style="color: #c97a2b; font-size: 1.05rem;">-${formatMoney(item.amount)}</strong>
+        </td>
+        <td class="text-center" style="white-space: nowrap;">
+          <button type="button" class="btn-ghost-sm" onclick="toggleValeStatus('${item.id}')" style="padding: 3px 8px; font-size: 0.72rem; margin-right: 4px;" title="Cambiar estado">
+            ${isSettled ? 'Marcar Pendiente' : '✅ Liquidar'}
+          </button>
+          <button type="button" class="btn-icon-action" onclick="deleteVale('${item.id}')" title="Eliminar vale">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+window.toggleValeStatus = function(id) {
+  const vale = state.vales.find(v => v.id === id);
+  if (!vale) return;
+
+  vale.status = vale.status === 'liquidado' ? 'pendiente' : 'liquidado';
+  saveVales();
+  renderVales();
+  showToast(vale.status === 'liquidado' ? '✅ Vale marcado como liquidado' : '⏳ Vale marcado como pendiente');
+};
+
+window.deleteVale = function(id) {
+  if (confirm('¿Deseas eliminar este registro de vale?')) {
+    state.vales = state.vales.filter(v => v.id !== id);
+    saveVales();
+    renderVales();
+    showToast('Vale eliminado.');
+  }
+};
+
+// ==========================================================================
+// GRÁFICOS Y MÉTODOS DE PAGO
 // ==========================================================================
 
 function renderCharts() {
@@ -425,7 +388,6 @@ function renderEvolutionChart() {
 
   const filtered = getFilteredTransactions();
 
-  // Agrupar movimientos por fecha
   const daysMap = {};
   filtered.forEach(item => {
     if (!item.date) return;
@@ -446,15 +408,14 @@ function renderEvolutionChart() {
     ctx.fillStyle = '#9e8e91';
     ctx.font = '14px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('No hay datos en este período para graficar', width / 2, height / 2);
+    ctx.fillText('Aún no hay registros en este período. Anota una clienta para ver el gráfico.', width / 2, height / 2);
     return;
   }
 
-  // Tomar hasta los últimos 10 puntos para legibilidad
   const displayDates = sortedDates.slice(-10);
   const maxVal = Math.max(
     ...displayDates.map(d => Math.max(daysMap[d].income, daysMap[d].expense)),
-    50000
+    30000
   );
 
   const paddingLeft = 60;
@@ -465,7 +426,6 @@ function renderEvolutionChart() {
   const chartW = width - paddingLeft - paddingRight;
   const chartH = height - paddingTop - paddingBottom;
 
-  // Dibujar líneas horizontales de guía
   ctx.strokeStyle = 'rgba(183, 110, 121, 0.12)';
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
@@ -485,7 +445,6 @@ function renderEvolutionChart() {
   }
   ctx.setLineDash([]);
 
-  // Dibujar Barras agrupadas para cada fecha
   const step = chartW / displayDates.length;
   const barWidth = Math.min(22, (step / 2) - 4);
 
@@ -493,7 +452,7 @@ function renderEvolutionChart() {
     const data = daysMap[dateStr];
     const centerX = paddingLeft + (index * step) + (step / 2);
 
-    // Barra Ingreso (Rose Gold)
+    // Barra Ingreso
     const incomeH = (data.income / maxVal) * chartH;
     const incomeY = paddingTop + chartH - incomeH;
     const incomeX = centerX - barWidth - 2;
@@ -506,7 +465,7 @@ function renderEvolutionChart() {
     roundRect(ctx, incomeX, incomeY, barWidth, incomeH, 4);
     ctx.fill();
 
-    // Barra Gasto (Terracota Soft)
+    // Barra Gasto
     const expenseH = (data.expense / maxVal) * chartH;
     const expenseY = paddingTop + chartH - expenseH;
     const expenseX = centerX + 2;
@@ -519,7 +478,6 @@ function renderEvolutionChart() {
     roundRect(ctx, expenseX, expenseY, barWidth, expenseH, 4);
     ctx.fill();
 
-    // Etiqueta Fecha (DD/MM)
     const parts = dateStr.split('-');
     const label = `${parts[2]}/${parts[1]}`;
     ctx.fillStyle = '#786a6d';
@@ -529,7 +487,6 @@ function renderEvolutionChart() {
   });
 }
 
-// Utilidad para dibujar rectángulos redondeados en canvas
 function roundRect(ctx, x, y, width, height, radius) {
   if (height <= 0) return;
   radius = Math.min(radius, width / 2, height / 2);
@@ -570,7 +527,7 @@ function renderServicesBreakdown() {
   document.getElementById('totalServicesBadge').textContent = `${filtered.length} cita${filtered.length === 1 ? '' : 's'}`;
 
   if (sortedServices.length === 0) {
-    container.innerHTML = '<p class="empty-state-text" style="text-align: center; color: var(--text-muted); padding: 20px;">Sin citas en este período.</p>';
+    container.innerHTML = '<p class="empty-state-text" style="text-align: center; color: var(--text-muted); padding: 20px;">Sin citas registradas aún.</p>';
     return;
   }
 
@@ -595,19 +552,20 @@ function renderPaymentMethodsSummary() {
   if (!container) return;
 
   const filtered = getFilteredTransactions().filter(t => t.type === 'income');
+  
+  // Binance como método oficial
   const methods = {
     'Transferencia': { icon: '📲', total: 0, count: 0 },
     'Efectivo': { icon: '💵', total: 0, count: 0 },
-    'Tarjeta': { icon: '💳', total: 0, count: 0 }
+    'Binance': { icon: '🟡', total: 0, count: 0 }
   };
 
   filtered.forEach(t => {
-    const m = t.paymentMethod || 'Otro';
-    const amt = (Number(t.amount) || 0) + (Number(t.tip) || 0);
+    let m = t.paymentMethod || 'Otro';
     if (!methods[m]) {
       methods[m] = { icon: '✨', total: 0, count: 0 };
     }
-    methods[m].total += amt;
+    methods[m].total += (Number(t.amount) || 0) + (Number(t.tip) || 0);
     methods[m].count++;
   });
 
@@ -640,7 +598,6 @@ function renderTransactionsTable() {
 
   let list = [...state.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  // Filtros
   if (typeFilter !== 'all') {
     list = list.filter(item => item.type === typeFilter);
   }
@@ -659,7 +616,6 @@ function renderTransactionsTable() {
     });
   }
 
-  // Llenar autocompletado de clientas frecuentes
   const datalist = document.getElementById('frequentClientsList');
   if (datalist) {
     const uniqueClients = [...new Set(state.transactions.filter(t => t.client).map(t => t.client))];
@@ -811,6 +767,8 @@ function setupEventListeners() {
       state.currentTab = targetId;
       if (targetId === 'tab-dashboard') {
         renderCharts();
+      } else if (targetId === 'tab-vales') {
+        renderVales();
       }
     });
   });
@@ -866,7 +824,6 @@ function setupEventListeners() {
   document.getElementById('closeExpenseModalBtn').addEventListener('click', () => expenseModal.classList.remove('open'));
   document.getElementById('cancelExpenseModalBtn').addEventListener('click', () => expenseModal.classList.remove('open'));
 
-  // Chips de categoría de gastos
   document.querySelectorAll('.chip-cat').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.chip-cat').forEach(c => c.classList.remove('active'));
@@ -895,6 +852,55 @@ function setupEventListeners() {
     expenseModal.classList.remove('open');
     showToast(`🧴 Gasto registrado: ${formatMoney(newTx.amount)}`, true);
   });
+
+  // MODAL VALES (ADELANTOS DE LA DUEÑA)
+  const valeModal = document.getElementById('valeModal');
+  const openValeModal = () => {
+    resetValeForm();
+    valeModal.classList.add('open');
+  };
+
+  const openValeBtn1 = document.getElementById('openValeModalBtn');
+  if (openValeBtn1) openValeBtn1.addEventListener('click', openValeModal);
+
+  const openValeBtn2 = document.getElementById('openAddValeModalBtn');
+  if (openValeBtn2) openValeBtn2.addEventListener('click', openValeModal);
+
+  document.getElementById('closeValeModalBtn').addEventListener('click', () => valeModal.classList.remove('open'));
+  document.getElementById('cancelValeModalBtn').addEventListener('click', () => valeModal.classList.remove('open'));
+
+  // Form Vale
+  document.getElementById('valeForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newVale = {
+      id: 'val-' + Date.now(),
+      amount: parseFloat(document.getElementById('valeAmount').value) || 0,
+      concept: document.getElementById('valeConcept').value.trim(),
+      date: document.getElementById('valeDateTime').value || new Date().toISOString(),
+      paymentMethod: document.getElementById('valePaymentMethod').value,
+      status: 'pendiente'
+    };
+
+    state.vales.unshift(newVale);
+    saveVales();
+    renderVales();
+    valeModal.classList.remove('open');
+    showToast(`🎟️ Vale anotado: ${formatMoney(newVale.amount)}`);
+  });
+
+  // Marcar todos los vales como liquidados
+  const settleAllBtn = document.getElementById('settleAllValesBtn');
+  if (settleAllBtn) {
+    settleAllBtn.addEventListener('click', () => {
+      if (state.vales.length === 0) return;
+      if (confirm('¿Deseas marcar todos los vales pendientes como liquidados/descontados en el pago?')) {
+        state.vales.forEach(v => v.status = 'liquidado');
+        saveVales();
+        renderVales();
+        showToast('✅ Todos los vales marcados como liquidados.');
+      }
+    });
+  }
 
   // Filtros de tabla
   document.getElementById('transactionsSearchInput').addEventListener('input', renderTransactionsTable);
@@ -948,7 +954,7 @@ function setupEventListeners() {
   // Form Configuración
   document.getElementById('settingsForm').addEventListener('submit', (e) => {
     e.preventDefault();
-    state.settings.studioName = document.getElementById('settingStudioName').value.trim() || DEFAULT_SETTINGS.studioName;
+    state.settings.studioName = document.getElementById('settingStudioName').value.trim() || 'Yiyizzu Nails';
     state.settings.currency = document.getElementById('settingCurrencySymbol').value;
     state.settings.monthlyGoal = parseFloat(document.getElementById('settingMonthlyGoal').value) || 850000;
     state.settings.manicuristName = document.getElementById('settingManicuristName').value.trim();
@@ -958,7 +964,7 @@ function setupEventListeners() {
     showToast('✨ Preferencias del Studio guardadas.');
   });
 
-  // Cambiar meta desde botón directo
+  // Cambiar meta
   document.getElementById('editGoalBtn').addEventListener('click', () => {
     const current = state.settings.monthlyGoal || 850000;
     const newGoalStr = prompt('Ingresa tu nueva meta de ingresos mensual:', current);
@@ -973,7 +979,7 @@ function setupEventListeners() {
     }
   });
 
-  // Exportar Excel (CSV)
+  // Exportar Excel
   document.getElementById('exportCsvBtn').addEventListener('click', exportToCsv);
 
   // Descargar Respaldo JSON
@@ -982,31 +988,18 @@ function setupEventListeners() {
   // Restaurar Respaldo
   document.getElementById('restoreBackupInput').addEventListener('change', restoreBackupJson);
 
-  // Cargar datos muestra
-  document.getElementById('loadDemoDataBtn').addEventListener('click', () => {
-    if (confirm('¿Deseas restaurar los datos de ejemplo del salón?')) {
-      state.transactions = generateSampleTransactions();
-      state.services = [...DEFAULT_SERVICES];
-      state.settings = { ...DEFAULT_SETTINGS };
-      saveTransactions();
-      saveServices();
-      saveSettings();
-      renderAll();
-      showToast('🌸 Datos de demostración cargados.');
-    }
-  });
-
-  // Borrar todo
+  // Borrar todo / Reiniciar a 0
   document.getElementById('resetDataBtn').addEventListener('click', () => {
-    if (confirm('⚠️ ¿Estás seguro de que quieres borrar todos los registros? Esta acción no se puede deshacer.')) {
+    if (confirm('⚠️ ¿Estás seguro de que deseas reiniciar todos los registros a 0?')) {
       state.transactions = [];
+      state.vales = [];
       saveTransactions();
+      saveVales();
       renderAll();
-      showToast('Datos reiniciados con éxito.', true);
+      showToast('Cuentas y vales reiniciados a 0.', true);
     }
   });
 
-  // Redimensionar gráfico en ventana cambiante
   window.addEventListener('resize', () => {
     if (state.currentTab === 'tab-dashboard') {
       renderEvolutionChart();
@@ -1021,7 +1014,6 @@ function resetIncomeForm() {
   document.getElementById('incomeTip').value = '';
   document.getElementById('incomeNotes').value = '';
   
-  // Fecha actual local en formato datetime-local
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   document.getElementById('incomeDateTime').value = now.toISOString().slice(0, 16);
@@ -1035,6 +1027,15 @@ function resetExpenseForm() {
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   document.getElementById('expenseDateTime').value = now.toISOString().slice(0, 16);
+}
+
+function resetValeForm() {
+  document.getElementById('valeAmount').value = '';
+  document.getElementById('valeConcept').value = '';
+
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('valeDateTime').value = now.toISOString().slice(0, 16);
 }
 
 // ==========================================================================
@@ -1079,37 +1080,47 @@ window.deleteService = function(id) {
 // ==========================================================================
 
 function exportToCsv() {
-  if (state.transactions.length === 0) {
-    alert('No hay registros para exportar.');
+  if (state.transactions.length === 0 && state.vales.length === 0) {
+    alert('No hay registros aún para exportar.');
     return;
   }
 
-  const headers = ['Fecha', 'Tipo', 'Clienta / Concepto', 'Servicio / Categoria', 'Monto Base', 'Propina', 'Total', 'Metodo de Pago', 'Notas'];
-  const rows = state.transactions.map(item => {
+  const headers = ['Tipo Registro', 'Fecha', 'Concepto / Clienta', 'Detalle / Categoria', 'Monto', 'Propina', 'Metodo', 'Estado'];
+  
+  const txRows = state.transactions.map(item => {
     const isIncome = item.type === 'income';
     const amount = Number(item.amount) || 0;
     const tip = Number(item.tip) || 0;
-    const total = isIncome ? amount + tip : amount;
 
     return [
+      `"${isIncome ? 'Ingreso Servicio' : 'Gasto Insumos'}"`,
       `"${item.date || ''}"`,
-      `"${isIncome ? 'Ingreso' : 'Gasto'}"`,
       `"${(isIncome ? item.client : item.concept) || ''}"`,
       `"${(isIncome ? item.service : item.category) || ''}"`,
       amount,
       tip,
-      total,
       `"${item.paymentMethod || ''}"`,
-      `"${(item.notes || '').replace(/"/g, '""')}"`
+      '"Completado"'
     ].join(',');
   });
 
-  const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+  const valeRows = state.vales.map(v => [
+    '"Vale / Adelanto"',
+    `"${v.date || ''}"`,
+    `"${v.concept || 'Adelanto Dueña'}"`,
+    '"Adelanto de Sueldo"',
+    v.amount,
+    0,
+    `"${v.paymentMethod || ''}"`,
+    `"${v.status === 'liquidado' ? 'Liquidado' : 'Pendiente'}"`
+  ].join(','));
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...txRows, ...valeRows].join('\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `cuentas_uñas_${new Date().toISOString().slice(0, 10)}.csv`);
+  link.setAttribute('download', `yiyizzu_nails_cuentas_${new Date().toISOString().slice(0, 10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -1121,6 +1132,7 @@ function downloadBackupJson() {
     settings: state.settings,
     services: state.services,
     transactions: state.transactions,
+    vales: state.vales,
     exportDate: new Date().toISOString()
   };
 
@@ -1129,7 +1141,7 @@ function downloadBackupJson() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `respaldo_nail_studio_${new Date().toISOString().slice(0, 10)}.json`);
+  link.setAttribute('download', `respaldo_yiyizzu_nails_${new Date().toISOString().slice(0, 10)}.json`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -1146,10 +1158,12 @@ function restoreBackupJson(e) {
       const data = JSON.parse(event.target.result);
       if (data.transactions && Array.isArray(data.transactions)) {
         state.transactions = data.transactions;
+        if (data.vales) state.vales = data.vales;
         if (data.services) state.services = data.services;
         if (data.settings) state.settings = data.settings;
 
         saveTransactions();
+        saveVales();
         saveServices();
         saveSettings();
         renderAll();

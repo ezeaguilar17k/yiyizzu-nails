@@ -43,6 +43,14 @@
           </svg>
           <span>Registrar Gasto</span>
         </button>
+
+        <button type="button" class="btn btn-vale" id="openValeModalBtn">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+            <line x1="2" y1="10" x2="22" y2="10"></line>
+          </svg>
+          <span>🎟️ Pedir Vale</span>
+        </button>
       </div>
     </div>
   </header>
@@ -58,6 +66,11 @@
       <button class="nav-tab" data-tab="tab-movimientos" id="tabBtnMovimientos">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
         <span>Historial de Cuentas</span>
+      </button>
+
+      <button class="nav-tab" data-tab="tab-vales" id="tabBtnVales">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        <span>🎟️ Vales & Adelantos</span>
       </button>
 
       <button class="nav-tab" data-tab="tab-servicios" id="tabBtnServicios">
@@ -243,7 +256,7 @@
               <option value="all">Cualquier pago</option>
               <option value="Efectivo">Efectivo 💵</option>
               <option value="Transferencia">Transferencia 📲</option>
-              <option value="Tarjeta">Tarjeta 💳</option>
+              <option value="Binance">Binance 🟡</option>
               <option value="Otro">Otro</option>
             </select>
 
@@ -282,7 +295,79 @@
     </section>
 
     <!-- ============================================== -->
-    <!-- PESTAÑA 3: CATÁLOGO DE SERVICIOS & PRECIOS -->
+    <!-- PESTAÑA 3: VALES & ADELANTOS (LA DUEÑA) -->
+    <!-- ============================================== -->
+    <section class="tab-content" id="tab-vales">
+      <div class="vales-management-card">
+        <div class="vales-header">
+          <div>
+            <div class="studio-badge"><span class="sparkle">🎟️</span> Control de Adelantos de Sueldo</div>
+            <h2 class="card-main-title">Vales & Adelantos Pedidos a la Dueña</h2>
+            <p class="card-subtitle">Registra cada anticipo que le pidas a la dueña antes del día de pago para que las cuentas queden claras y sin errores.</p>
+          </div>
+          <button type="button" class="btn btn-primary" id="openAddValeModalBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>+ Registrar Nuevo Vale</span>
+          </button>
+        </div>
+
+        <!-- Tarjetas de Resumen de Liquidación -->
+        <div class="vales-kpi-grid">
+          <div class="vales-kpi-card">
+            <span class="vales-kpi-label">💅 Total Producido en Uñas</span>
+            <div class="vales-kpi-value value-produced" id="valesTotalProduced">$0</div>
+            <small class="vales-kpi-sub">Total generado en servicios</small>
+          </div>
+
+          <div class="vales-kpi-card card-vales-taken">
+            <span class="vales-kpi-label">🎟️ Total en Vales (Ya pedidos)</span>
+            <div class="vales-kpi-value value-vales" id="valesTotalTaken">-$0</div>
+            <small class="vales-kpi-sub" id="valesCountDisplay">0 vales registrados</small>
+          </div>
+
+          <div class="vales-kpi-card card-liquidation">
+            <span class="vales-kpi-label">💰 Saldo a Cobrar el Día de Pago</span>
+            <div class="vales-kpi-value value-pending" id="valesNetToCollect">$0</div>
+            <small class="vales-kpi-sub">Lo que la dueña te debe entregar</small>
+          </div>
+        </div>
+
+        <!-- Tabla / Lista de Vales -->
+        <div class="table-responsive" style="margin-top: 26px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <h3 style="font-family: var(--font-serif); font-size: 1.15rem; color: var(--text-main);">Detalle de Vales Registrados</h3>
+            <button type="button" class="btn-ghost-sm" id="settleAllValesBtn" title="Marcar todos los vales como liquidados">
+              ✅ Marcar todos como Liquidados
+            </button>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Fecha & Hora</th>
+                <th>Motivo / Concepto</th>
+                <th>¿Cómo te lo dio?</th>
+                <th>Estado</th>
+                <th class="text-right">Monto del Vale</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="valesTableBody">
+              <!-- Insertado dinámicamente -->
+            </tbody>
+          </table>
+
+          <div class="empty-state" id="emptyValesState" style="display: none;">
+            <div class="empty-illustration">🎟️</div>
+            <h4>No tienes vales registrados</h4>
+            <p>Cuando le pidas un adelanto a la dueña antes de la fecha de pago, anótalo con el botón de arriba.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PESTAÑA 4: CATÁLOGO DE SERVICIOS & PRECIOS -->
     <!-- ============================================== -->
     <section class="tab-content" id="tab-servicios">
       <div class="services-management-card">
@@ -450,7 +535,7 @@
             <select id="incomePaymentMethod" class="form-control" required>
               <option value="Transferencia">Transferencia 📲</option>
               <option value="Efectivo">Efectivo 💵</option>
-              <option value="Tarjeta">Tarjeta de Débito/Crédito 💳</option>
+              <option value="Binance">Binance 🟡 (USDT)</option>
               <option value="Otro">Otro</option>
             </select>
           </div>
@@ -531,7 +616,7 @@
             <select id="expensePaymentMethod" class="form-control">
               <option value="Transferencia">Transferencia 📲</option>
               <option value="Efectivo">Efectivo 💵</option>
-              <option value="Tarjeta">Tarjeta 💳</option>
+              <option value="Binance">Binance 🟡 (USDT)</option>
               <option value="Otro">Otro</option>
             </select>
           </div>
@@ -611,6 +696,60 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-outline" id="cancelServiceModalBtn">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar Servicio</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: REGISTRAR NUEVO VALE (ADELANTO DE SUELDO) -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="valeModal">
+    <div class="modal-container modal-container-sm">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge-icon" style="background: #fbf5e6; color: #b47f08;">🎟️</span>
+          <div>
+            <h3 class="modal-title">Registrar Vale / Adelanto</h3>
+            <p class="modal-subtitle">Adelanto solicitado a la dueña antes del día de pago</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeValeModalBtn">&times;</button>
+      </div>
+
+      <form id="valeForm" class="modal-body">
+        <div class="form-group">
+          <label for="valeAmount" class="form-label">Monto del Adelanto *</label>
+          <input type="number" id="valeAmount" class="form-control" placeholder="20000" min="0" step="100" required>
+        </div>
+
+        <div class="form-group">
+          <label for="valeConcept" class="form-label">Motivo / Concepto del Vale *</label>
+          <input type="text" id="valeConcept" class="form-control" placeholder="Ej. Para pasajes y colación / Adelanto semana" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="valeDateTime" class="form-label">Fecha y Hora</label>
+            <input type="datetime-local" id="valeDateTime" class="form-control" required>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="valePaymentMethod" class="form-label">¿Cómo te lo entregó?</label>
+            <select id="valePaymentMethod" class="form-control">
+              <option value="Efectivo">Efectivo 💵</option>
+              <option value="Transferencia">Transferencia 📲</option>
+              <option value="Binance">Binance 🟡</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelValeModalBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <span>Guardar Vale 🎟️</span>
+          </button>
         </div>
       </form>
     </div>
