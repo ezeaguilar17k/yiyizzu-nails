@@ -228,9 +228,16 @@ function renderKPIsAndGoal() {
   document.getElementById('kpiExpensesCount').textContent = `${expenseCount} compra${expenseCount === 1 ? '' : 's'} de insumos`;
   document.getElementById('kpiExpenseRatio').textContent = `${expenseRatio}% de ingresos`;
 
-  document.getElementById('kpiAverageTicket').textContent = formatMoney(averageTicket);
+  document.getElementById('kpiAverageTicket').textContent = `Prom: ${formatMoney(averageTicket)}`;
 
-  // Meta Mensual
+  // Vales pendientes en la tarjeta billetera
+  const pendingValesTotal = state.vales
+    .filter(v => v.status !== 'liquidado')
+    .reduce((sum, v) => sum + (Number(v.amount) || 0), 0);
+  const walletValesEl = document.getElementById('kpiValesWalletVal');
+  if (walletValesEl) {
+    walletValesEl.textContent = `-${formatMoney(pendingValesTotal)}`;
+  }
   const now = new Date();
   const currentMonthIncome = state.transactions
     .filter(t => {
@@ -752,10 +759,17 @@ window.selectQuickService = function(serviceId) {
 // EVENT LISTENERS & MODALES
 // ==========================================================================
 
+function hapticTap() {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try { navigator.vibrate(15); } catch(e) {}
+  }
+}
+
 function setupEventListeners() {
   // Pestañas (Tabs)
   document.querySelectorAll('.nav-tab').forEach(btn => {
     btn.addEventListener('click', () => {
+      hapticTap();
       document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
@@ -776,6 +790,7 @@ function setupEventListeners() {
   // Filtros de tiempo (Hoy, Semana, Mes, Total)
   document.querySelectorAll('.pill-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      hapticTap();
       document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.currentPeriod = btn.dataset.period;
@@ -784,18 +799,88 @@ function setupEventListeners() {
     });
   });
 
+  // Switcher Segmentado de Analíticas (0 Scroll en Móvil)
+  document.querySelectorAll('.segment-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      hapticTap();
+      document.querySelectorAll('.segment-pill').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.segment-tab-panel').forEach(p => {
+        p.style.display = 'none';
+        p.classList.remove('active');
+      });
+
+      btn.classList.add('active');
+      const targetPanelId = btn.dataset.segment;
+      const targetPanel = document.getElementById(targetPanelId);
+      if (targetPanel) {
+        targetPanel.style.display = 'block';
+        targetPanel.classList.add('active');
+        if (targetPanelId === 'segment-chart') {
+          renderEvolutionChart();
+        }
+      }
+    });
+  });
+
   // Modal Ingreso
   const incomeModal = document.getElementById('incomeModal');
-  document.getElementById('openIncomeModalBtn').addEventListener('click', () => {
+  const openIncome = () => {
+    hapticTap();
     resetIncomeForm();
     incomeModal.classList.add('open');
-  });
+  };
+
+  const openIncomeBtn = document.getElementById('openIncomeModalBtn');
+  if (openIncomeBtn) openIncomeBtn.addEventListener('click', openIncome);
+
+  const thumbIncomeBtn = document.getElementById('thumbIncomeBtn');
+  if (thumbIncomeBtn) thumbIncomeBtn.addEventListener('click', openIncome);
+
   document.getElementById('closeIncomeModalBtn').addEventListener('click', () => incomeModal.classList.remove('open'));
   document.getElementById('cancelIncomeModalBtn').addEventListener('click', () => incomeModal.classList.remove('open'));
+
+  // Modal Gasto
+  const expenseModal = document.getElementById('expenseModal');
+  const openExpense = () => {
+    hapticTap();
+    resetExpenseForm();
+    expenseModal.classList.add('open');
+  };
+
+  const openExpenseBtn = document.getElementById('openExpenseModalBtn');
+  if (openExpenseBtn) openExpenseBtn.addEventListener('click', openExpense);
+
+  const thumbExpenseBtn = document.getElementById('thumbExpenseBtn');
+  if (thumbExpenseBtn) thumbExpenseBtn.addEventListener('click', openExpense);
+
+  // Modal Gasto close listeners
+  document.getElementById('closeExpenseModalBtn').addEventListener('click', () => expenseModal.classList.remove('open'));
+  document.getElementById('cancelExpenseModalBtn').addEventListener('click', () => expenseModal.classList.remove('open'));
+
+  // Modal Vale
+  const valeModal = document.getElementById('valeModal');
+  const openVale = () => {
+    hapticTap();
+    resetValeForm();
+    valeModal.classList.add('open');
+  };
+
+  const openValeBtn = document.getElementById('openValeModalBtn');
+  if (openValeBtn) openValeBtn.addEventListener('click', openVale);
+
+  const openAddValeBtn = document.getElementById('openAddValeModalBtn');
+  if (openAddValeBtn) openAddValeBtn.addEventListener('click', openVale);
+
+  const thumbValeBtn = document.getElementById('thumbValeBtn');
+  if (thumbValeBtn) thumbValeBtn.addEventListener('click', openVale);
+
+  document.getElementById('closeValeModalBtn').addEventListener('click', () => valeModal.classList.remove('open'));
+  document.getElementById('cancelValeModalBtn').addEventListener('click', () => valeModal.classList.remove('open'));
 
   // Form Ingreso
   document.getElementById('incomeForm').addEventListener('submit', (e) => {
     e.preventDefault();
+    hapticTap();
     const newTx = {
       id: 'tx-' + Date.now(),
       type: 'income',
@@ -814,15 +899,6 @@ function setupEventListeners() {
     incomeModal.classList.remove('open');
     showToast(`💖 ¡Servicio guardado exitosamente! Total: ${formatMoney(newTx.amount + newTx.tip)}`);
   });
-
-  // Modal Gasto
-  const expenseModal = document.getElementById('expenseModal');
-  document.getElementById('openExpenseModalBtn').addEventListener('click', () => {
-    resetExpenseForm();
-    expenseModal.classList.add('open');
-  });
-  document.getElementById('closeExpenseModalBtn').addEventListener('click', () => expenseModal.classList.remove('open'));
-  document.getElementById('cancelExpenseModalBtn').addEventListener('click', () => expenseModal.classList.remove('open'));
 
   document.querySelectorAll('.chip-cat').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -852,22 +928,6 @@ function setupEventListeners() {
     expenseModal.classList.remove('open');
     showToast(`🧴 Gasto registrado: ${formatMoney(newTx.amount)}`, true);
   });
-
-  // MODAL VALES (ADELANTOS DE LA DUEÑA)
-  const valeModal = document.getElementById('valeModal');
-  const openValeModal = () => {
-    resetValeForm();
-    valeModal.classList.add('open');
-  };
-
-  const openValeBtn1 = document.getElementById('openValeModalBtn');
-  if (openValeBtn1) openValeBtn1.addEventListener('click', openValeModal);
-
-  const openValeBtn2 = document.getElementById('openAddValeModalBtn');
-  if (openValeBtn2) openValeBtn2.addEventListener('click', openValeModal);
-
-  document.getElementById('closeValeModalBtn').addEventListener('click', () => valeModal.classList.remove('open'));
-  document.getElementById('cancelValeModalBtn').addEventListener('click', () => valeModal.classList.remove('open'));
 
   // Form Vale
   document.getElementById('valeForm').addEventListener('submit', (e) => {
