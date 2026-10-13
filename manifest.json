@@ -1,0 +1,17 @@
+{
+  "name": "Yiyizzu Nails",
+  "short_name": "Yiyizzu Nails",
+  "description": "Control de finanzas, clientas y servicios para Yiyizzu Nails",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fcf8f7",
+  "theme_color": "#b76e79",
+  "icons": [
+    {
+      "src": "assets/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

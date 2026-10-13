@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yiyizzu Nails | Control de Finanzas & Clientas</title>
+  <meta name="description" content="Aplicación elegante y moderna de control de ingresos, gastos y clientas para Yiyizzu Nails.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Barra Superior de Marca -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-identity">
+        <div class="logo-wrapper">
+          <img src="assets/logo.jpg" alt="Logo Yiyizzu Nails" class="brand-logo" id="headerLogo">
+        </div>
+        <div class="brand-text">
+          <div class="studio-badge"><span class="sparkle">✨</span> Luxury Nail Artist</div>
+          <h1 class="studio-name" id="displayStudioName">Yiyizzu Nails</h1>
+          <p class="studio-date" id="currentDateDisplay">Cargando fecha...</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Quick Action Buttons -->
+        <button type="button" class="btn btn-primary" id="openIncomeModalBtn">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Nueva Clienta / Ingreso</span>
+        </button>
+
+        <button type="button" class="btn btn-secondary" id="openExpenseModalBtn">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Registrar Gasto</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navegación por Pestañas -->
+  <nav class="main-navigation">
+    <div class="nav-container">
+      <button class="nav-tab active" data-tab="tab-dashboard" id="tabBtnDashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Resumen Financiero</span>
+      </button>
+
+      <button class="nav-tab" data-tab="tab-movimientos" id="tabBtnMovimientos">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <span>Historial de Cuentas</span>
+      </button>
+
+      <button class="nav-tab" data-tab="tab-servicios" id="tabBtnServicios">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+        <span>Mis Servicios & Precios</span>
+      </button>
+
+      <button class="nav-tab" data-tab="tab-configuracion" id="tabBtnConfiguracion">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <span>Ajustes & Copia</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Contenedor Principal de Vistas -->
+  <main class="app-main">
+    
+    <!-- ============================================== -->
+    <!-- PESTAÑA 1: DASHBOARD FINANCIERO -->
+    <!-- ============================================== -->
+    <section class="tab-content active" id="tab-dashboard">
+      <!-- Selector de Filtro de Tiempo -->
+      <div class="time-filter-bar">
+        <div class="time-filter-label">
+          <span class="pulse-dot"></span>
+          <span>Período de análisis:</span>
+        </div>
+        <div class="time-filter-pills" id="timePeriodSelector">
+          <button type="button" class="pill-btn" data-period="today">Hoy</button>
+          <button type="button" class="pill-btn" data-period="week">Esta Semana</button>
+          <button type="button" class="pill-btn active" data-period="month">Este Mes</button>
+          <button type="button" class="pill-btn" data-period="all">Histórico Total</button>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Métricas Principales (KPIs) -->
+      <div class="kpi-grid">
+        <!-- Balance Neto (Ganancia Real) -->
+        <div class="kpi-card kpi-balance">
+          <div class="kpi-header">
+            <span class="kpi-title">Ganancia Neta (Tu Ganancia)</span>
+            <div class="kpi-icon-badge balance-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpiNetBalance">$0</div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext" id="kpiNetMargin">Margen: 100% libre</span>
+            <span class="kpi-status-tag tag-success" id="kpiNetStatus">¡Excelente ritmo! 💅</span>
+          </div>
+        </div>
+
+        <!-- Ingresos Totales -->
+        <div class="kpi-card kpi-income">
+          <div class="kpi-header">
+            <span class="kpi-title">Ingresos por Servicios</span>
+            <div class="kpi-icon-badge income-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpiTotalIncome">$0</div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext" id="kpiClientsCount">0 clientas atendidas</span>
+            <span class="kpi-pill" id="kpiTipsTotal">Propinas: $0</span>
+          </div>
+        </div>
+
+        <!-- Gastos en Materiales e Insumos -->
+        <div class="kpi-card kpi-expenses">
+          <div class="kpi-header">
+            <span class="kpi-title">Gastos en Insumos & Local</span>
+            <div class="kpi-icon-badge expense-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpiTotalExpenses">$0</div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext" id="kpiExpensesCount">0 compras de material</span>
+            <span class="kpi-pill expense-pill" id="kpiExpenseRatio">0% de ingresos</span>
+          </div>
+        </div>
+
+        <!-- Ticket Promedio por Clienta -->
+        <div class="kpi-card kpi-average">
+          <div class="kpi-header">
+            <span class="kpi-title">Promedio por Clienta</span>
+            <div class="kpi-icon-badge average-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+          </div>
+          <div class="kpi-value" id="kpiAverageTicket">$0</div>
+          <div class="kpi-footer">
+            <span class="kpi-subtext">Ingreso medio por cita</span>
+            <span class="kpi-status-tag tag-gold">✨ Valor promedio</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Meta Mensual Inspiradora -->
+      <div class="monthly-goal-card">
+        <div class="goal-header">
+          <div class="goal-info">
+            <span class="goal-badge">🎯 Meta Financiera Mensual</span>
+            <h3 class="goal-title" id="goalTitleDisplay">Meta del mes: $800.000</h3>
+            <p class="goal-subtext" id="goalSubtext">Has alcanzado $0 (0%) de tu meta este mes</p>
+          </div>
+          <button type="button" class="btn-ghost-sm" id="editGoalBtn">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span>Cambiar meta</span>
+          </button>
+        </div>
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar-fill" id="goalProgressBar" style="width: 0%;"></div>
+        </div>
+        <div class="goal-cheer-message" id="goalCheerMsg">
+          🌸 ¡Comenzando con toda la actitud! Cada cita te acerca a tu meta.
+        </div>
+      </div>
+
+      <!-- Sección de Gráficos y Visualización -->
+      <div class="charts-grid">
+        <!-- Gráfico de Comparación Temporal -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <h3 class="chart-title">Evolución de Ingresos vs Gastos</h3>
+              <p class="chart-subtitle" id="chartEvolutionSubtitle">Comparativa en el período seleccionado</p>
+            </div>
+            <div class="chart-legend">
+              <span class="legend-item"><span class="legend-dot dot-income"></span> Ingresos</span>
+              <span class="legend-item"><span class="legend-dot dot-expense"></span> Gastos</span>
+            </div>
+          </div>
+          <div class="canvas-container">
+            <canvas id="evolutionChart" height="230"></canvas>
+          </div>
+        </div>
+
+        <!-- Distribución de Servicios & Métodos de Pago -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <h3 class="chart-title">Servicios Más Realizados</h3>
+              <p class="chart-subtitle">¿Qué tipo de uñas te piden más?</p>
+            </div>
+            <div class="services-total-pill" id="totalServicesBadge">0 citas</div>
+          </div>
+          <div class="services-breakdown-list" id="servicesBreakdownContainer">
+            <!-- Rellenado dinámicamente con barras visuales -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Métodos de Pago -->
+      <div class="payment-methods-card">
+        <h3 class="payment-methods-title">💳 Ingresos según Método de Pago</h3>
+        <div class="payment-pills-grid" id="paymentMethodsSummary">
+          <!-- Rellenado dinámicamente -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PESTAÑA 2: HISTORIAL DE CUENTAS & REGISTROS -->
+    <!-- ============================================== -->
+    <section class="tab-content" id="tab-movimientos">
+      <div class="table-card">
+        <!-- Barra de Filtros y Búsqueda -->
+        <div class="table-actions-bar">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="transactionsSearchInput" placeholder="Buscar por clienta, servicio, gasto..." class="search-input">
+          </div>
+
+          <div class="filter-controls-group">
+            <select id="transactionTypeFilter" class="custom-select">
+              <option value="all">Todos los movimientos</option>
+              <option value="income">Solo Ingresos (Clientas)</option>
+              <option value="expense">Solo Gastos (Insumos)</option>
+            </select>
+
+            <select id="paymentFilter" class="custom-select">
+              <option value="all">Cualquier pago</option>
+              <option value="Efectivo">Efectivo 💵</option>
+              <option value="Transferencia">Transferencia 📲</option>
+              <option value="Tarjeta">Tarjeta 💳</option>
+              <option value="Otro">Otro</option>
+            </select>
+
+            <button type="button" class="btn btn-outline" id="exportCsvBtn" title="Exportar a archivo de Excel">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>Exportar Excel</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabla de Registros -->
+        <div class="table-responsive">
+          <table class="data-table" id="transactionsTable">
+            <thead>
+              <tr>
+                <th>Fecha & Hora</th>
+                <th>Tipo</th>
+                <th>Clienta / Concepto</th>
+                <th>Servicio / Categoría</th>
+                <th>Método de Pago</th>
+                <th class="text-right">Monto</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTableBody">
+              <!-- Insertado dinámicamente -->
+            </tbody>
+          </table>
+          <div class="empty-state" id="emptyTransactionsState" style="display: none;">
+            <div class="empty-illustration">💅</div>
+            <h4>No hay movimientos registrados</h4>
+            <p>Agrega un nuevo ingreso o gasto para comenzar a ver tus cuentas al detalle.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PESTAÑA 3: CATÁLOGO DE SERVICIOS & PRECIOS -->
+    <!-- ============================================== -->
+    <section class="tab-content" id="tab-servicios">
+      <div class="services-management-card">
+        <div class="services-management-header">
+          <div>
+            <h2 class="card-main-title">Catálogo de Servicios & Precios</h2>
+            <p class="card-subtitle">Personaliza tu lista de servicios para que registrar una cita sea cuestión de un solo clic.</p>
+          </div>
+          <button type="button" class="btn btn-primary" id="openAddServiceModalBtn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>+ Agregar Servicio</span>
+          </button>
+        </div>
+
+        <div class="services-grid-list" id="servicesGridContainer">
+          <!-- Tarjetas de servicios cargadas con JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- PESTAÑA 4: CONFIGURACIÓN & COPIA DE SEGURIDAD -->
+    <!-- ============================================== -->
+    <section class="tab-content" id="tab-configuracion">
+      <div class="config-grid">
+        <!-- Perfil y Preferencias -->
+        <div class="settings-card">
+          <h2 class="card-main-title">Personalización del Studio</h2>
+          <p class="card-subtitle">Adapta el nombre de tu marca y la moneda a tu país.</p>
+
+          <form id="settingsForm" class="settings-form">
+            <div class="form-group">
+              <label for="settingStudioName" class="form-label">Nombre de tu Studio / Negocio</label>
+              <input type="text" id="settingStudioName" class="form-control" placeholder="Ej. Camila Nails Studio">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-half">
+                <label for="settingCurrencySymbol" class="form-label">Símbolo de Moneda</label>
+                <select id="settingCurrencySymbol" class="form-control">
+                  <option value="$">$ (Pesos / Dólares)</option>
+                  <option value="CLP $">CLP $ (Chile)</option>
+                  <option value="COP $">COP $ (Colombia)</option>
+                  <option value="MXN $">MXN $ (México)</option>
+                  <option value="ARS $">ARS $ (Argentina)</option>
+                  <option value="USD $">USD $ (Dólar)</option>
+                  <option value="€">€ (Euros)</option>
+                  <option value="S/.">S/. (Soles Perú)</option>
+                </select>
+              </div>
+
+              <div class="form-group col-half">
+                <label for="settingMonthlyGoal" class="form-label">Meta Mensual de Ganancia</label>
+                <input type="number" id="settingMonthlyGoal" class="form-control" min="0" step="1000" placeholder="800000">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="settingManicuristName" class="form-label">Nombre de la Manicurista</label>
+              <input type="text" id="settingManicuristName" class="form-control" placeholder="Ej. Valentina Morales">
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              <span>Guardar Preferencias</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Respaldo de Datos y Opciones Avanzadas -->
+        <div class="settings-card">
+          <h2 class="card-main-title">Seguridad y Respaldo de Cuentas</h2>
+          <p class="card-subtitle">Tus datos se guardan automáticamente en este navegador. Puedes respaldarlos o transferirlos cuando quieras.</p>
+
+          <div class="backup-actions">
+            <div class="backup-item">
+              <div class="backup-desc">
+                <h4>📥 Descargar Copia de Seguridad</h4>
+                <p>Guarda todos tus registros, clientas y servicios en un archivo seguro en tu computadora o celular.</p>
+              </div>
+              <button type="button" class="btn btn-secondary" id="downloadBackupBtn">
+                Descargar Respaldo (JSON)
+              </button>
+            </div>
+
+            <div class="backup-item">
+              <div class="backup-desc">
+                <h4>📤 Restaurar Copia de Seguridad</h4>
+                <p>Carga un archivo de respaldo previo para restaurar tus cuentas en cualquier momento.</p>
+              </div>
+              <label class="btn btn-outline file-input-label">
+                <span>Seleccionar Archivo</span>
+                <input type="file" id="restoreBackupInput" accept=".json" style="display: none;">
+              </label>
+            </div>
+
+            <div class="backup-item border-danger">
+              <div class="backup-desc">
+                <h4>🧹 Reiniciar o Cargar Muestra</h4>
+                <p>¿Quieres ver cómo funciona con datos de ejemplo o empezar desde cero?</p>
+              </div>
+              <div class="danger-buttons-group">
+                <button type="button" class="btn-ghost-sm" id="loadDemoDataBtn">Cargar Datos de Muestra</button>
+                <button type="button" class="btn-danger-sm" id="resetDataBtn">Borrar Todo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- MODAL: NUEVO INGRESO / CLIENTA -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="incomeModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge-icon">💅</span>
+          <div>
+            <h3 class="modal-title">Registrar Servicio a Clienta</h3>
+            <p class="modal-subtitle">Anota la cita y el pago recibido en segundos</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeIncomeModalBtn">&times;</button>
+      </div>
+
+      <form id="incomeForm" class="modal-body">
+        <!-- Selector rápido con Chips de Servicios -->
+        <div class="form-group">
+          <label class="form-label">✨ Selección Rápida de Servicio (Haz clic para autocompletar):</label>
+          <div class="quick-service-chips" id="quickServiceChips">
+            <!-- Chips inyectados con JS -->
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="incomeClientName" class="form-label">Nombre de la Clienta *</label>
+            <input type="text" id="incomeClientName" class="form-control" placeholder="Ej. Camila Andrea" required list="frequentClientsList">
+            <datalist id="frequentClientsList"></datalist>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="incomeService" class="form-label">Servicio Realizado *</label>
+            <input type="text" id="incomeService" class="form-control" placeholder="Ej. Uñas Acrílicas Baby Boomer" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-third">
+            <label for="incomeAmount" class="form-label">Monto Cobrado *</label>
+            <input type="number" id="incomeAmount" class="form-control" placeholder="25000" min="0" step="100" required>
+          </div>
+
+          <div class="form-group col-third">
+            <label for="incomeTip" class="form-label">Propina Extra (Opcional)</label>
+            <input type="number" id="incomeTip" class="form-control" placeholder="0" min="0" step="100">
+          </div>
+
+          <div class="form-group col-third">
+            <label for="incomePaymentMethod" class="form-label">Método de Pago *</label>
+            <select id="incomePaymentMethod" class="form-control" required>
+              <option value="Transferencia">Transferencia 📲</option>
+              <option value="Efectivo">Efectivo 💵</option>
+              <option value="Tarjeta">Tarjeta de Débito/Crédito 💳</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="incomeDateTime" class="form-label">Fecha y Hora</label>
+            <input type="datetime-local" id="incomeDateTime" class="form-control" required>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="incomeNotes" class="form-label">Detalles / Diseño de Uñas (Opcional)</label>
+            <input type="text" id="incomeNotes" class="form-control" placeholder="Ej. Largo #3, efecto azúcar en dos uñas">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelIncomeModalBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <span>Guardar Ingreso 💖</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: REGISTRAR GASTO EN MATERIALES -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="expenseModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge-icon expense-icon-badge">🧴</span>
+          <div>
+            <h3 class="modal-title">Registrar Gasto de Material / Local</h3>
+            <p class="modal-subtitle">Lleva el control de tus compras de insumos para saber tu ganancia real</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeExpenseModalBtn">&times;</button>
+      </div>
+
+      <form id="expenseForm" class="modal-body">
+        <!-- Chips de categoría -->
+        <div class="form-group">
+          <label class="form-label">Categoría del Gasto:</label>
+          <div class="quick-category-chips" id="quickCategoryChips">
+            <button type="button" class="chip-cat active" data-cat="Esmaltes & Geles">💅 Esmaltes & Geles</button>
+            <button type="button" class="chip-cat" data-cat="Líquidos & Acrílicos">🧪 Monómero & Acrílico</button>
+            <button type="button" class="chip-cat" data-cat="Limas, Tips & Desechables">✂️ Tips, Limas & Guantes</button>
+            <button type="button" class="chip-cat" data-cat="Herramientas & Equipos">💡 Fresas & Lámparas</button>
+            <button type="button" class="chip-cat" data-cat="Alquiler & Servicios">🏠 Alquiler / Luz</button>
+            <button type="button" class="chip-cat" data-cat="Otros">📦 Varios</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="expenseCategory" class="form-label">Categoría Seleccionada *</label>
+            <input type="text" id="expenseCategory" class="form-control" value="Esmaltes & Geles" required>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="expenseConcept" class="form-label">Descripción de la Compra *</label>
+            <input type="text" id="expenseConcept" class="form-control" placeholder="Ej. Pack 6 esmaltes Cherimoya + Top Coat" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="expenseAmount" class="form-label">Monto del Gasto *</label>
+            <input type="number" id="expenseAmount" class="form-control" placeholder="18000" min="0" step="100" required>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="expensePaymentMethod" class="form-label">Método de Pago Utilizado</label>
+            <select id="expensePaymentMethod" class="form-control">
+              <option value="Transferencia">Transferencia 📲</option>
+              <option value="Efectivo">Efectivo 💵</option>
+              <option value="Tarjeta">Tarjeta 💳</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="expenseDateTime" class="form-label">Fecha de Compra</label>
+            <input type="datetime-local" id="expenseDateTime" class="form-control" required>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="expenseNotes" class="form-label">Notas Adicionales / Proveedor</label>
+            <input type="text" id="expenseNotes" class="form-control" placeholder="Ej. Comprado en Distribuidora Beauty Pro">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelExpenseModalBtn">Cancelar</button>
+          <button type="submit" class="btn btn-secondary">
+            <span>Guardar Gasto ✨</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: AGREGAR O EDITAR SERVICIO EN CATÁLOGO -->
+  <!-- ============================================== -->
+  <div class="modal-overlay" id="serviceModal">
+    <div class="modal-container modal-container-sm">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge-icon">💎</span>
+          <div>
+            <h3 class="modal-title" id="serviceModalTitle">Agregar Servicio</h3>
+            <p class="modal-subtitle">Define el precio para autocompletar tus ingresos</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeServiceModalBtn">&times;</button>
+      </div>
+
+      <form id="serviceForm" class="modal-body">
+        <input type="hidden" id="serviceEditId">
+
+        <div class="form-group">
+          <label for="serviceNameInput" class="form-label">Nombre del Servicio *</label>
+          <input type="text" id="serviceNameInput" class="form-control" placeholder="Ej. Soft Gel con Diseño" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="servicePriceInput" class="form-label">Precio Habitual *</label>
+            <input type="number" id="servicePriceInput" class="form-control" placeholder="22000" min="0" step="100" required>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="serviceDurationInput" class="form-label">Duración Aprox. (Opcional)</label>
+            <input type="text" id="serviceDurationInput" class="form-control" placeholder="Ej. 1h 30m">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="serviceIconSelect" class="form-label">Icono Representativo</label>
+          <select id="serviceIconSelect" class="form-control">
+            <option value="💅">💅 Uñas / Manicura</option>
+            <option value="✨">✨ Acrílicas / Esculpidas</option>
+            <option value="🌸">🌸 Soft Gel / Tips</option>
+            <option value="💎">💎 Kapping / Baño de Gel</option>
+            <option value="🎨">🎨 Nail Art / Diseños</option>
+            <option value="👣">👣 Pedicura / Spa de Pies</option>
+            <option value="🧴">🧴 Retiro / Mantenimiento</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelServiceModalBtn">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Servicio</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notificaciones Flotantes Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Script Principal de la Aplicación -->
+  <script src="app.js"></script>
+</body>
+</html>
